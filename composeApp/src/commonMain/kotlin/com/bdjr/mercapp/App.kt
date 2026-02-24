@@ -2,6 +2,7 @@ package com.bdjr.mercapp
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,27 +15,38 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.Typography
+import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import com.bdjr.mercapp.auth.usecase.ObserveSession
@@ -51,13 +63,67 @@ import com.bdjr.mercapp.domain.usecase.SoftDeleteProduct
 import com.bdjr.mercapp.domain.usecase.UpsertEstablishment
 import com.bdjr.mercapp.domain.usecase.UpsertProduct
 import com.bdjr.mercapp.sync.usecase.RunSync
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlin.coroutines.coroutineContext
 import org.koin.core.component.KoinComponent
+
+private val MercappTypography = Typography(
+    titleLarge = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 0.sp),
+    titleMedium = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 0.sp),
+    bodyLarge = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal, letterSpacing = 0.2.sp),
+    bodyMedium = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal, letterSpacing = 0.2.sp),
+    labelLarge = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 0.2.sp),
+)
+
+private val MercappShapes = Shapes(
+    extraSmall = androidx.compose.foundation.shape.RoundedCornerShape(10.dp),
+    small = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+    medium = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
+    large = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
+    extraLarge = androidx.compose.foundation.shape.RoundedCornerShape(28.dp),
+)
+
+private val MercappLightColors: ColorScheme = lightColorScheme(
+    primary = Color(0xFF3B82F6),
+    onPrimary = Color(0xFFFFFFFF),
+    secondary = Color(0xFF10B981),
+    onSecondary = Color(0xFF003322),
+    background = Color(0xFFF8FAFC),
+    onBackground = Color(0xFF0B1220),
+    surface = Color(0xFFF8FAFC),
+    onSurface = Color(0xFF0B1220),
+    surfaceVariant = Color(0xFFE2E8F0),
+    onSurfaceVariant = Color(0xFF334155),
+    error = Color(0xFFEF4444),
+    onError = Color(0xFFFFFFFF),
+)
+
+private val MercappDarkColors: ColorScheme = darkColorScheme(
+    primary = Color(0xFF60A5FA),
+    onPrimary = Color(0xFF081228),
+    secondary = Color(0xFF34D399),
+    onSecondary = Color(0xFF002117),
+    background = Color(0xFF0B1220),
+    onBackground = Color(0xFFE5E7EB),
+    surface = Color(0xFF0B1220),
+    onSurface = Color(0xFFE5E7EB),
+    surfaceVariant = Color(0xFF1F2937),
+    onSurfaceVariant = Color(0xFFCBD5E1),
+    error = Color(0xFFF87171),
+    onError = Color(0xFF2A0B0B),
+)
 
 @Composable
 @Preview
 fun App() {
-    MaterialTheme {
+    val isDark = isSystemInDarkTheme()
+    MaterialTheme(
+        colorScheme = if (isDark) MercappDarkColors else MercappLightColors,
+        typography = MercappTypography,
+        shapes = MercappShapes,
+    ) {
         val koinHolder = remember {
             object : KoinComponent {}
         }
@@ -73,6 +139,8 @@ fun App() {
 
         val session by observeSession().collectAsState()
 
+        var lastAutoSyncError by remember { mutableStateOf<String?>(null) }
+
         LaunchedEffect(Unit) {
             runCatching { restoreSession() }
         }
@@ -80,6 +148,21 @@ fun App() {
         LaunchedEffect(session?.userId) {
             if (session != null) {
                 runCatching { ensureFreshSession() }
+            }
+        }
+
+        LaunchedEffect(session?.userId) {
+            if (session == null) return@LaunchedEffect
+
+            delay(2_000)
+            while (coroutineContext.isActive) {
+                runCatching {
+                    ensureFreshSession()
+                    runSync()
+                }
+                    .onSuccess { lastAutoSyncError = null }
+                    .onFailure { t -> lastAutoSyncError = t.message ?: "Error al sincronizar" }
+                delay(60_000)
             }
         }
 
@@ -113,6 +196,7 @@ fun App() {
             HomeScreen(
                 establishmentsCount = establishments.size,
                 establishments = establishments,
+                autoSyncError = lastAutoSyncError,
                 onOpen = { est ->
                     selectedEstablishmentId = est.id
                     selectedEstablishmentName = est.name
@@ -151,6 +235,7 @@ fun App() {
             ProductsScreen(
                 establishmentName = selectedEstablishmentName ?: "Productos",
                 products = products,
+                autoSyncError = lastAutoSyncError,
                 onBack = {
                     selectedEstablishmentId = null
                     selectedEstablishmentName = null
@@ -206,6 +291,7 @@ fun App() {
 private fun HomeScreen(
     establishmentsCount: Int,
     establishments: List<com.bdjr.mercapp.domain.model.Establishment>,
+    autoSyncError: String?,
     onOpen: (com.bdjr.mercapp.domain.model.Establishment) -> Unit,
     onAdd: suspend (name: String) -> Unit,
     onEdit: suspend (id: String, name: String) -> Unit,
@@ -226,14 +312,13 @@ private fun HomeScreen(
     var isSyncing by remember { mutableStateOf(false) }
 
     Scaffold(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
-            .safeContentPadding(),
+        modifier = Modifier.safeContentPadding(),
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = { Text("Mercapp") },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
                 ),
                 actions = {
                     TextButton(
@@ -273,6 +358,8 @@ private fun HomeScreen(
                     addName = ""
                     showAddDialog = true
                 },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
             ) {
                 Text("+")
             }
@@ -293,6 +380,14 @@ private fun HomeScreen(
                 style = MaterialTheme.typography.titleMedium,
             )
 
+            if (autoSyncError != null) {
+                Text(
+                    text = "Auto-sync: ${autoSyncError}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -303,7 +398,7 @@ private fun HomeScreen(
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.surface,
                         ),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                     ) {
                         Column(
                             modifier = Modifier
@@ -355,13 +450,11 @@ private fun HomeScreen(
                                 if (item.isDeleted) {
                                     AssistChip(
                                         onClick = {},
+                                        colors = AssistChipDefaults.assistChipColors(
+                                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                            labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        ),
                                         label = { Text("Eliminado") },
-                                    )
-                                }
-                                if (item.isDirty) {
-                                    AssistChip(
-                                        onClick = {},
-                                        label = { Text("Pendiente Sync") },
                                     )
                                 }
                             }
@@ -506,6 +599,7 @@ private fun HomeScreen(
 private fun ProductsScreen(
     establishmentName: String,
     products: List<com.bdjr.mercapp.domain.model.Product>,
+    autoSyncError: String?,
     onBack: () -> Unit,
     onAdd: suspend (name: String) -> Unit,
     onEdit: suspend (id: String, name: String, isInShoppingList: Boolean) -> Unit,
@@ -516,6 +610,7 @@ private fun ProductsScreen(
 ) {
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+    @Suppress("DEPRECATION")
     val clipboardManager = LocalClipboardManager.current
 
     var tabIndex by remember { mutableStateOf(0) }
@@ -534,7 +629,11 @@ private fun ProductsScreen(
         products.filter { it.isInShoppingList && !it.isDeleted }
     }
 
-    val filtered = remember(products, query) {
+    val availableProducts = remember(products) {
+        products.filter { !it.isInShoppingList && !it.isDeleted }
+    }
+
+    val filteredShoppingList = remember(shoppingList, query) {
         val tokens = query
             .trim()
             .lowercase()
@@ -543,9 +642,27 @@ private fun ProductsScreen(
             .filter { it.isNotEmpty() }
 
         if (tokens.isEmpty()) {
-            products
+            shoppingList
         } else {
-            products.filter { p ->
+            shoppingList.filter { p ->
+                val name = p.name.lowercase()
+                tokens.all { token -> name.contains(token) }
+            }
+        }
+    }
+
+    val filtered = remember(availableProducts, query) {
+        val tokens = query
+            .trim()
+            .lowercase()
+            .split(" ")
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+
+        if (tokens.isEmpty()) {
+            availableProducts
+        } else {
+            availableProducts.filter { p ->
                 val name = p.name.lowercase()
                 tokens.all { token -> name.contains(token) }
             }
@@ -553,16 +670,33 @@ private fun ProductsScreen(
     }
 
     Scaffold(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
-            .safeContentPadding(),
+        modifier = Modifier.safeContentPadding(),
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = { Text(establishmentName) },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
                 ),
                 actions = {
+                    if (tabIndex == 1) {
+                        TextButton(
+                            onClick = {
+                                val text = shoppingList
+                                    .sortedBy { it.name.lowercase() }
+                                    .joinToString(separator = "\n") { "- ${it.name}" }
+
+                                scope.launch {
+                                    @Suppress("DEPRECATION")
+                                    clipboardManager.setText(AnnotatedString(text))
+                                    snackbarHostState.showSnackbar("Copiado")
+                                }
+                            },
+                            enabled = shoppingList.isNotEmpty(),
+                        ) {
+                            Text("Copiar")
+                        }
+                    }
                     TextButton(
                         onClick = {
                             scope.launch {
@@ -603,6 +737,8 @@ private fun ProductsScreen(
                     addName = ""
                     showAddDialog = true
                 },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
             ) {
                 Text("+")
             }
@@ -616,7 +752,7 @@ private fun ProductsScreen(
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            TabRow(selectedTabIndex = tabIndex) {
+            PrimaryTabRow(selectedTabIndex = tabIndex) {
                 Tab(
                     selected = tabIndex == 0,
                     onClick = { tabIndex = 0 },
@@ -636,6 +772,14 @@ private fun ProductsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
             )
+
+            if (autoSyncError != null) {
+                Text(
+                    text = "Auto-sync: ${autoSyncError}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
 
             if (tabIndex == 0) {
                 Text(
@@ -663,7 +807,7 @@ private fun ProductsScreen(
                             colors = CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.surface,
                             ),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                         ) {
                             Column(
                                 modifier = Modifier
@@ -722,19 +866,21 @@ private fun ProductsScreen(
                                     if (item.isInShoppingList) {
                                         AssistChip(
                                             onClick = {},
+                                            colors = AssistChipDefaults.assistChipColors(
+                                                containerColor = MaterialTheme.colorScheme.secondary,
+                                                labelColor = MaterialTheme.colorScheme.onSecondary,
+                                            ),
                                             label = { Text("En lista") },
                                         )
                                     }
                                     if (item.isDeleted) {
                                         AssistChip(
                                             onClick = {},
+                                            colors = AssistChipDefaults.assistChipColors(
+                                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                                labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            ),
                                             label = { Text("Eliminado") },
-                                        )
-                                    }
-                                    if (item.isDirty) {
-                                        AssistChip(
-                                            onClick = {},
-                                            label = { Text("Pendiente Sync") },
                                         )
                                     }
                                 }
@@ -743,16 +889,22 @@ private fun ProductsScreen(
                     }
                 }
 
-                if (products.isEmpty()) {
+                if (availableProducts.isEmpty()) {
                     Text(
                         text = "Aún no tienes productos. Crea el primero con el +",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                } else if (filtered.isEmpty()) {
+                    Text(
+                        text = "No hay resultados con esta búsqueda.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             } else {
                 Text(
-                    text = "Lista de mercado (${shoppingList.size})",
+                    text = "Lista de mercado (${filteredShoppingList.size})",
                     style = MaterialTheme.typography.titleMedium,
                 )
 
@@ -760,7 +912,7 @@ private fun ProductsScreen(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
-                    items(shoppingList, key = { it.id }) { item ->
+                    items(filteredShoppingList, key = { it.id }) { item ->
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -775,7 +927,7 @@ private fun ProductsScreen(
                             colors = CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.surface,
                             ),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                         ) {
                             Row(
                                 modifier = Modifier
@@ -798,6 +950,12 @@ private fun ProductsScreen(
                 if (shoppingList.isEmpty()) {
                     Text(
                         text = "Tu lista está vacía. Vuelve a Productos y toca para agregar.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                } else if (filteredShoppingList.isEmpty()) {
+                    Text(
+                        text = "No hay resultados en tu lista con esta búsqueda.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -945,9 +1103,8 @@ private fun AuthScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
-            .safeContentPadding(),
+        modifier = Modifier.safeContentPadding(),
+        containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
         Column(
@@ -1014,6 +1171,10 @@ private fun AuthScreen(
                 },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = email.isNotBlank() && password.isNotBlank() && !isLoading,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                ),
             ) {
                 Text(text = if (isLoading) "Procesando..." else if (isSignUp) "Crear cuenta" else "Entrar")
             }

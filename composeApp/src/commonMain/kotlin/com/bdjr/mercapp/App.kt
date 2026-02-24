@@ -4,13 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
@@ -21,8 +21,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -312,7 +315,7 @@ private fun HomeScreen(
     var isSyncing by remember { mutableStateOf(false) }
 
     Scaffold(
-        modifier = Modifier.safeContentPadding(),
+        modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
@@ -393,8 +396,11 @@ private fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 items(establishments, key = { it.id }) { item ->
+                    var menuExpanded by remember(item.id) { mutableStateOf(false) }
                     Card(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable(enabled = !item.isDeleted) { onOpen(item) },
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.surface,
                         ),
@@ -412,33 +418,37 @@ private fun HomeScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Text(text = item.name, style = MaterialTheme.typography.titleMedium)
-                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    TextButton(
-                                        onClick = {
-                                            onOpen(item)
-                                        },
+                                Box {
+                                    IconButton(
+                                        onClick = { menuExpanded = true },
                                         enabled = !item.isDeleted,
                                     ) {
-                                        Text("Abrir")
+                                        Text("⋮")
                                     }
-                                    TextButton(
-                                        onClick = {
-                                            editId = item.id
-                                            editName = item.name
-                                            showEditDialog = true
-                                        },
-                                        enabled = !item.isDeleted,
+
+                                    DropdownMenu(
+                                        expanded = menuExpanded,
+                                        onDismissRequest = { menuExpanded = false },
                                     ) {
-                                        Text("Editar")
-                                    }
-                                    TextButton(
-                                        onClick = {
-                                            deleteId = item.id
-                                            showDeleteConfirm = true
-                                        },
-                                        enabled = !item.isDeleted,
-                                    ) {
-                                        Text("Eliminar")
+                                        DropdownMenuItem(
+                                            text = { Text("Editar") },
+                                            onClick = {
+                                                menuExpanded = false
+                                                editId = item.id
+                                                editName = item.name
+                                                showEditDialog = true
+                                            },
+                                            enabled = !item.isDeleted,
+                                        )
+                                        DropdownMenuItem(
+                                            text = { Text("Eliminar") },
+                                            onClick = {
+                                                menuExpanded = false
+                                                deleteId = item.id
+                                                showDeleteConfirm = true
+                                            },
+                                            enabled = !item.isDeleted,
+                                        )
                                     }
                                 }
                             }
@@ -670,7 +680,7 @@ private fun ProductsScreen(
     }
 
     Scaffold(
-        modifier = Modifier.safeContentPadding(),
+        modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
@@ -792,6 +802,7 @@ private fun ProductsScreen(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     items(filtered, key = { it.id }) { item ->
+                        var menuExpanded by remember(item.id) { mutableStateOf(false) }
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -821,40 +832,37 @@ private fun ProductsScreen(
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     Text(text = item.name, style = MaterialTheme.typography.titleMedium)
-                                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                        TextButton(
-                                            onClick = {
-                                                val next = !item.isInShoppingList
-                                                scope.launch {
-                                                    runCatching { onToggleShopping(item.id, next) }
-                                                        .onFailure { t ->
-                                                            snackbarHostState.showSnackbar(t.message ?: "Error")
-                                                        }
-                                                }
-                                            },
+                                    Box {
+                                        IconButton(
+                                            onClick = { menuExpanded = true },
                                             enabled = !item.isDeleted,
                                         ) {
-                                            Text(if (item.isInShoppingList) "Quitar" else "Agregar")
+                                            Text("⋮")
                                         }
-                                        TextButton(
-                                            onClick = {
-                                                editId = item.id
-                                                editName = item.name
-                                                editInShopping = item.isInShoppingList
-                                                showEditDialog = true
-                                            },
-                                            enabled = !item.isDeleted,
+                                        DropdownMenu(
+                                            expanded = menuExpanded,
+                                            onDismissRequest = { menuExpanded = false },
                                         ) {
-                                            Text("Editar")
-                                        }
-                                        TextButton(
-                                            onClick = {
-                                                deleteId = item.id
-                                                showDeleteConfirm = true
-                                            },
-                                            enabled = !item.isDeleted,
-                                        ) {
-                                            Text("Eliminar")
+                                            DropdownMenuItem(
+                                                text = { Text("Editar") },
+                                                onClick = {
+                                                    menuExpanded = false
+                                                    editId = item.id
+                                                    editName = item.name
+                                                    editInShopping = item.isInShoppingList
+                                                    showEditDialog = true
+                                                },
+                                                enabled = !item.isDeleted,
+                                            )
+                                            DropdownMenuItem(
+                                                text = { Text("Eliminar") },
+                                                onClick = {
+                                                    menuExpanded = false
+                                                    deleteId = item.id
+                                                    showDeleteConfirm = true
+                                                },
+                                                enabled = !item.isDeleted,
+                                            )
                                         }
                                     }
                                 }
@@ -913,6 +921,7 @@ private fun ProductsScreen(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     items(filteredShoppingList, key = { it.id }) { item ->
+                        var menuExpanded by remember(item.id) { mutableStateOf(false) }
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -937,11 +946,34 @@ private fun ProductsScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Text(text = item.name, style = MaterialTheme.typography.titleMedium)
-                                Text(
-                                    text = "Quitar",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.primary,
-                                )
+                                Box {
+                                    IconButton(onClick = { menuExpanded = true }) {
+                                        Text("⋮")
+                                    }
+                                    DropdownMenu(
+                                        expanded = menuExpanded,
+                                        onDismissRequest = { menuExpanded = false },
+                                    ) {
+                                        DropdownMenuItem(
+                                            text = { Text("Editar") },
+                                            onClick = {
+                                                menuExpanded = false
+                                                editId = item.id
+                                                editName = item.name
+                                                editInShopping = item.isInShoppingList
+                                                showEditDialog = true
+                                            },
+                                        )
+                                        DropdownMenuItem(
+                                            text = { Text("Eliminar") },
+                                            onClick = {
+                                                menuExpanded = false
+                                                deleteId = item.id
+                                                showDeleteConfirm = true
+                                            },
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -1103,7 +1135,7 @@ private fun AuthScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
-        modifier = Modifier.safeContentPadding(),
+        modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->

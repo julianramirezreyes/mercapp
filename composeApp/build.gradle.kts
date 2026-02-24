@@ -54,6 +54,29 @@ android {
     namespace = "com.bdjr.mercapp"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
+    val releaseStoreFile = providers.gradleProperty("RELEASE_STORE_FILE").orNull
+    val releaseStorePassword = providers.gradleProperty("RELEASE_STORE_PASSWORD").orNull
+    val releaseKeyAlias = providers.gradleProperty("RELEASE_KEY_ALIAS").orNull
+    val releaseKeyPassword = providers.gradleProperty("RELEASE_KEY_PASSWORD").orNull
+
+    signingConfigs {
+        create("release") {
+            if (
+                releaseStoreFile != null &&
+                releaseStorePassword != null &&
+                releaseKeyAlias != null &&
+                releaseKeyPassword != null
+            ) {
+                storeFile = file(releaseStoreFile)
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+                enableV1Signing = true
+                enableV2Signing = true
+            }
+        }
+    }
+
     defaultConfig {
         applicationId = "com.bdjr.mercapp"
         minSdk = libs.versions.android.minSdk.get().toInt()
@@ -69,6 +92,14 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
+            if (
+                releaseStoreFile != null &&
+                releaseStorePassword != null &&
+                releaseKeyAlias != null &&
+                releaseKeyPassword != null
+            ) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
     compileOptions {

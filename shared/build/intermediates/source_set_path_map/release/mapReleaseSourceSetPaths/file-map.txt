@@ -1,0 +1,13 @@
+com.bdjr.mercapp.shared-sqlite-release-0 /home/julian/.gradle/caches/8.14.3/transforms/136070cf06407e1451c447426c677ee9/transformed/sqlite-release/res
+com.bdjr.mercapp.shared-sqlite-framework-release-1 /home/julian/.gradle/caches/8.14.3/transforms/742763f925a1a2d9120f970328e3714b/transformed/sqlite-framework-release/res
+com.bdjr.mercapp.shared-startup-runtime-1.2.0-2 /home/julian/.gradle/caches/8.14.3/transforms/cc6355bb76e15891b958596c1965a681/transformed/startup-runtime-1.2.0/res
+com.bdjr.mercapp.shared-pngs-3 /home/julian/proyectos/kotlin/mercapp/shared/build/generated/res/pngs/release
+com.bdjr.mercapp.shared-resValues-4 /home/julian/proyectos/kotlin/mercapp/shared/build/generated/res/resValues/release
+com.bdjr.mercapp.shared-updated_navigation_xml-5 /home/julian/proyectos/kotlin/mercapp/shared/build/generated/updated_navigation_xml/release
+com.bdjr.mercapp.shared-mergeReleaseResources-6 /home/julian/proyectos/kotlin/mercapp/shared/build/intermediates/incremental/release/mergeReleaseResources/merged.dir
+com.bdjr.mercapp.shared-mergeReleaseResources-7 /home/julian/proyectos/kotlin/mercapp/shared/build/intermediates/incremental/release/mergeReleaseResources/stripped.dir
+com.bdjr.mercapp.shared-release-8 /home/julian/proyectos/kotlin/mercapp/shared/build/intermediates/merged_res/release/mergeReleaseResources
+com.bdjr.mercapp.shared-androidMain-9 /home/julian/proyectos/kotlin/mercapp/shared/src/androidMain/res
+com.bdjr.mercapp.shared-androidRelease-10 /home/julian/proyectos/kotlin/mercapp/shared/src/androidRelease/res
+com.bdjr.mercapp.shared-main-11 /home/julian/proyectos/kotlin/mercapp/shared/src/main/res
+com.bdjr.mercapp.shared-release-12 /home/julian/proyectos/kotlin/mercapp/shared/src/release/res

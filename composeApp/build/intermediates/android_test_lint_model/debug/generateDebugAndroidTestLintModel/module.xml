@@ -1,0 +1,19 @@
+<lint-module
+    format="1"
+    dir="/home/julian/proyectos/kotlin/mercapp/composeApp"
+    name=":composeApp"
+    type="APP"
+    maven="Mercapp:composeApp:unspecified"
+    agpVersion="8.13.2"
+    buildFolder="build"
+    bootClassPath="/home/julian/Android/Sdk/platforms/android-36/android.jar:/home/julian/Android/Sdk/build-tools/35.0.0/core-lambda-stubs.jar"
+    javaSourceLevel="11"
+    compileTarget="android-36"
+    neverShrinking="true">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="debug"/>
+</lint-module>

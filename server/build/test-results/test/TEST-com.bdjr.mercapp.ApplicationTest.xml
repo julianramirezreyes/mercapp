@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.bdjr.mercapp.ApplicationTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-02-24T16:45:09.172Z" hostname="julian-ThinkPad-L13-Yoga-Gen-2" time="3.83">
+  <properties/>
+  <testcase name="testRoot" classname="com.bdjr.mercapp.ApplicationTest" time="3.83"/>
+  <system-out><![CDATA[2026-02-24 11:45:11.937 [DefaultDispatcher-worker-1] TRACE i.ktor.client.plugins.HttpPlainText - Adding Accept-Charset=UTF-8 to http:///
+2026-02-24 11:45:12.335 [DefaultDispatcher-worker-1 @call-context#3] INFO  io.ktor.test - No ktor.deployment.watch patterns specified, automatic reload is not active.
+2026-02-24 11:45:12.430 [DefaultDispatcher-worker-1 @call-context#3] INFO  io.ktor.test - Application started in 0.171 seconds.
+2026-02-24 11:45:12.436 [DefaultDispatcher-worker-3 @coroutine#5] INFO  io.ktor.test - Responding at http://localhost:80
+2026-02-24 11:45:12.438 [DefaultDispatcher-worker-3 @coroutine#5] INFO  io.ktor.test - Responding at https://localhost:443
+2026-02-24 11:45:12.606 [DefaultDispatcher-worker-1 @request#3] TRACE io.ktor.server.routing.Routing - Trace for []
+/, segment:0 -> SUCCESS @ /
+  / [<slash>], segment:0 -> SUCCESS @ / [<slash>]
+    / [<slash>, (method:GET)], segment:0 -> SUCCESS @ / [<slash>, (method:GET)]
+Matched routes:
+  "" -> "<slash>" -> "(method:GET)"
+Routing resolve result:
+  SUCCESS @ / [<slash>, (method:GET)]
+2026-02-24 11:45:12.847 [DefaultDispatcher-worker-6] TRACE io.ktor.client.plugins.SaveBody - Saving body for http://localhost/
+2026-02-24 11:45:12.862 [DefaultDispatcher-worker-6] TRACE i.k.client.plugins.HttpCallValidator - Validating response for request http://localhost/
+2026-02-24 11:45:12.863 [DefaultDispatcher-worker-6] TRACE i.k.c.p.DefaultResponseValidation - Skipping default response validation for http://localhost/
+2026-02-24 11:45:12.897 [DefaultDispatcher-worker-6] TRACE i.k.c.plugins.defaultTransformers - Transformed with default transformers response body for http://localhost/ to class kotlinx.io.Source
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

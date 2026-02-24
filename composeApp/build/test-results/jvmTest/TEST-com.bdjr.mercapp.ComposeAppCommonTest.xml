@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.bdjr.mercapp.ComposeAppCommonTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-02-24T16:44:50.982Z" hostname="julian-ThinkPad-L13-Yoga-Gen-2" time="0.034">
+  <properties/>
+  <testcase name="example[jvm]" classname="com.bdjr.mercapp.ComposeAppCommonTest" time="0.034"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

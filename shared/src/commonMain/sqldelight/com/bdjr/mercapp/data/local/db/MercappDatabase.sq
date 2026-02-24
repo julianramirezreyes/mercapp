@@ -1,0 +1,166 @@
+import kotlin.Boolean;
+
+CREATE TABLE establishments (
+  id TEXT NOT NULL PRIMARY KEY,
+  name TEXT NOT NULL,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL,
+  is_dirty INTEGER AS Boolean NOT NULL,
+  is_deleted INTEGER AS Boolean NOT NULL
+);
+
+CREATE TABLE products (
+  id TEXT NOT NULL PRIMARY KEY,
+  name TEXT NOT NULL,
+  establishment_id TEXT NOT NULL,
+  is_in_shopping_list INTEGER AS Boolean NOT NULL,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL,
+  is_dirty INTEGER AS Boolean NOT NULL,
+  is_deleted INTEGER AS Boolean NOT NULL
+);
+
+CREATE TABLE sync_state (
+  key TEXT NOT NULL PRIMARY KEY,
+  value INTEGER NOT NULL
+);
+
+CREATE TABLE auth_session (
+  singleton_id INTEGER NOT NULL PRIMARY KEY,
+  access_token TEXT NOT NULL,
+  refresh_token TEXT NOT NULL,
+  token_type TEXT NOT NULL,
+  expires_at INTEGER NOT NULL,
+  user_id TEXT NOT NULL,
+  email TEXT
+);
+
+selectAllEstablishments:
+SELECT *
+FROM establishments
+WHERE (:includeDeleted OR is_deleted = 0)
+ORDER BY name ASC;
+
+selectEstablishmentById:
+SELECT *
+FROM establishments
+WHERE id = :id;
+
+selectProductsByEstablishment:
+SELECT *
+FROM products
+WHERE establishment_id = :establishmentId
+  AND (:includeDeleted OR is_deleted = 0)
+ORDER BY name ASC;
+
+selectProductById:
+SELECT *
+FROM products
+WHERE id = :id;
+
+selectDirtyEstablishments:
+SELECT *
+FROM establishments
+WHERE is_dirty = 1;
+
+selectDirtyProducts:
+SELECT *
+FROM products
+WHERE is_dirty = 1;
+
+markEstablishmentClean:
+UPDATE establishments
+SET is_dirty = 0,
+    updated_at = :updatedAt
+WHERE id = :id;
+
+markProductClean:
+UPDATE products
+SET is_dirty = 0,
+    updated_at = :updatedAt
+WHERE id = :id;
+
+selectSyncState:
+SELECT value
+FROM sync_state
+WHERE key = :key;
+
+upsertSyncState:
+INSERT OR REPLACE INTO sync_state(key, value)
+VALUES (:key, :value);
+
+selectAuthSession:
+SELECT *
+FROM auth_session
+WHERE singleton_id = 1;
+
+upsertAuthSession:
+INSERT OR REPLACE INTO auth_session(
+  singleton_id,
+  access_token,
+  refresh_token,
+  token_type,
+  expires_at,
+  user_id,
+  email
+)
+VALUES (
+  1,
+  :accessToken,
+  :refreshToken,
+  :tokenType,
+  :expiresAt,
+  :userId,
+  :email
+);
+
+clearAuthSession:
+DELETE FROM auth_session
+WHERE singleton_id = 1;
+
+insertEstablishmentIfAbsent:
+INSERT OR IGNORE INTO establishments(id, name, created_at, updated_at, is_dirty, is_deleted)
+VALUES (:id, :name, :createdAt, :updatedAt, :isDirty, :isDeleted);
+
+updateEstablishment:
+UPDATE establishments
+SET name = :name,
+    updated_at = :updatedAt,
+    is_dirty = :isDirty,
+    is_deleted = :isDeleted
+WHERE id = :id;
+
+markEstablishmentDeleted:
+UPDATE establishments
+SET is_deleted = 1,
+    is_dirty = 1,
+    updated_at = :updatedAt
+WHERE id = :id;
+
+insertProductIfAbsent:
+INSERT OR IGNORE INTO products(id, name, establishment_id, is_in_shopping_list, created_at, updated_at, is_dirty, is_deleted)
+VALUES (:id, :name, :establishmentId, :isInShoppingList, :createdAt, :updatedAt, :isDirty, :isDeleted);
+
+updateProduct:
+UPDATE products
+SET name = :name,
+    establishment_id = :establishmentId,
+    is_in_shopping_list = :isInShoppingList,
+    updated_at = :updatedAt,
+    is_dirty = :isDirty,
+    is_deleted = :isDeleted
+WHERE id = :id;
+
+setProductInShoppingList:
+UPDATE products
+SET is_in_shopping_list = :isInShoppingList,
+    is_dirty = 1,
+    updated_at = :updatedAt
+WHERE id = :id;
+
+markProductDeleted:
+UPDATE products
+SET is_deleted = 1,
+    is_dirty = 1,
+    updated_at = :updatedAt
+WHERE id = :id;

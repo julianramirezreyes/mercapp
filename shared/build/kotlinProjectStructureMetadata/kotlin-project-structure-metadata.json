@@ -1,0 +1,62 @@
+{
+  "projectStructure": {
+    "formatVersion": "0.3.3",
+    "isPublishedAsRoot": "true",
+    "variants": [
+      {
+        "name": "debugApiElements",
+        "sourceSet": [
+          "commonMain"
+        ]
+      },
+      {
+        "name": "debugRuntimeElements",
+        "sourceSet": [
+          "commonMain"
+        ]
+      },
+      {
+        "name": "releaseApiElements",
+        "sourceSet": [
+          "commonMain"
+        ]
+      },
+      {
+        "name": "releaseRuntimeElements",
+        "sourceSet": [
+          "commonMain"
+        ]
+      },
+      {
+        "name": "jvmApiElements",
+        "sourceSet": [
+          "commonMain"
+        ]
+      },
+      {
+        "name": "jvmRuntimeElements",
+        "sourceSet": [
+          "commonMain"
+        ]
+      }
+    ],
+    "sourceSets": [
+      {
+        "name": "commonMain",
+        "dependsOn": [],
+        "moduleDependency": [
+          "app.cash.sqldelight:runtime",
+          "org.jetbrains.kotlin:kotlin-stdlib",
+          "org.jetbrains.kotlinx:kotlinx-coroutines-core",
+          "org.jetbrains.kotlinx:kotlinx-serialization-json",
+          "io.insert-koin:koin-core",
+          "io.ktor:ktor-client-core",
+          "io.ktor:ktor-client-content-negotiation",
+          "io.ktor:ktor-serialization-kotlinx-json",
+          "app.cash.sqldelight:coroutines-extensions"
+        ],
+        "binaryLayout": "klib"
+      }
+    ]
+  }
+}

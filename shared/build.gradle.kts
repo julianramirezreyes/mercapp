@@ -1,0 +1,67 @@
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+plugins {
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.sqldelight)
+}
+
+kotlin {
+    androidTarget {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
+    }
+
+    jvm()
+    
+    sourceSets {
+        commonMain.dependencies {
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.serialization.json)
+            implementation(libs.koin.core)
+
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.contentNegotiation)
+            implementation(libs.ktor.serialization.kotlinxJson)
+
+            implementation(libs.sqldelight.runtime)
+            implementation(libs.sqldelight.coroutinesExtensions)
+        }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
+
+        androidMain.dependencies {
+            implementation(libs.sqldelight.androidDriver)
+            implementation(libs.ktor.client.okhttp)
+        }
+
+        jvmMain.dependencies {
+            implementation(libs.sqldelight.sqliteDriver)
+            implementation(libs.ktor.client.okhttp)
+        }
+    }
+}
+
+android {
+    namespace = "com.bdjr.mercapp.shared"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    defaultConfig {
+        minSdk = libs.versions.android.minSdk.get().toInt()
+    }
+}
+
+sqldelight {
+    databases {
+        create("MercappDatabase") {
+            packageName.set("com.bdjr.mercapp.data.local.db")
+        }
+    }
+}

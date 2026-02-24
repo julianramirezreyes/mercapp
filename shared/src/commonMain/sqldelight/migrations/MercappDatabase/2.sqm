@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS sync_state (
+  key TEXT NOT NULL PRIMARY KEY,
+  value INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS auth_session (
+  singleton_id INTEGER NOT NULL PRIMARY KEY,
+  access_token TEXT NOT NULL,
+  refresh_token TEXT NOT NULL,
+  token_type TEXT NOT NULL,
+  expires_at INTEGER NOT NULL,
+  user_id TEXT NOT NULL,
+  email TEXT
+);

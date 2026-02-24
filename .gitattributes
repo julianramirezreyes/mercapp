@@ -1,3 +1,6 @@
 build/** linguist-vendored
+.dart_tool/** linguist-vendored
 .gradle/** linguist-vendored
+web/** linguist-detectable=true
+*.js linguist-detectable=false
 *.html linguist-detectable=false

@@ -48,6 +48,10 @@
         "source": "com.bdjr.mercapp.composeApp-androidMain-47:/mipmap-anydpi-v26/ic_launcher_round.xml"
     },
     {
+        "merged": "com.bdjr.mercapp.composeApp-debug-45:/drawable-nodpi_ic_mercapp.png.flat",
+        "source": "com.bdjr.mercapp.composeApp-androidMain-47:/drawable-nodpi/ic_mercapp.png"
+    },
+    {
         "merged": "com.bdjr.mercapp.composeApp-debug-45:/mipmap-anydpi-v26_ic_launcher.xml.flat",
         "source": "com.bdjr.mercapp.composeApp-androidMain-47:/mipmap-anydpi-v26/ic_launcher.xml"
     },

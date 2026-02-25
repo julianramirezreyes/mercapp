@@ -1,95 +1,123 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop (JVM), Server.
+# Mercapp
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+Mercapp is an **offline-first shopping list** app built with **Kotlin Multiplatform** and **Compose Multiplatform**.
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+- **Primary language**: Kotlin
+- **UI**: Compose Multiplatform (Material 3)
+- **Local DB**: SQLDelight (SQLite)
+- **Backend**: Supabase (PostgREST + Auth)
 
-* [/server](./server/src/main/kotlin) is for the Ktor server application.
+## Features
 
-* [/shared](./shared/src) is for the code that will be shared between all targets in the project.
-  The most important subfolder is [commonMain](./shared/src/commonMain/kotlin). If preferred, you
-  can add code to the platform-specific folders here too.
+- **Offline-first**: create/edit establishments and products without connectivity.
+- **Sync**: automatic push/pull sync to Supabase with basic conflict handling.
+- **Shopping list**: products can be toggled in/out of the list per establishment.
+- **Share**: copy shopping list content for easy sharing (e.g. WhatsApp).
+- **Session persistence**: keep auth session locally and refresh when needed.
 
-### Build and Run Android Application
+## Project Structure
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+- **`composeApp/`**
+  - Compose Multiplatform application (Android + Desktop + Web targets).
+  - Main UI lives in `composeApp/src/commonMain/kotlin`.
+- **`shared/`**
+  - Shared Kotlin Multiplatform code (domain, data, sync, repositories, SQLDelight schema).
+- **`iosApp/`**
+  - iOS entry point (Xcode project).
+- **`server/`**
+  - Ktor server module (optional / experimental).
 
-### Build and Run Desktop (JVM) Application
+## Requirements
 
-To build and run the development version of the desktop app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:run
-  ```
+- **JDK 17** (recommended)
+- Android Studio / IntelliJ IDEA (for Android + KMP tooling)
+- Xcode (only for iOS)
 
-### Build and Run Server
+## Build & Run
 
-To build and run the development version of the server, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :server:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :server:run
-  ```
+### Android
 
-### Build and Run Web Application
+- **Debug APK**
 
-To build and run the development version of the web app, use the run configuration from the run widget
-in your IDE's toolbar or run it directly from the terminal:
-- for the Wasm target (faster, modern browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-- for the JS target (slower, supports older browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:jsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:jsBrowserDevelopmentRun
-    ```
+```bash
+./gradlew :composeApp:assembleDebug
+```
 
-### Build and Run iOS Application
+- **Install Debug on device (ADB)**
 
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+```bash
+./gradlew :composeApp:installDebug
+```
 
----
+### Desktop (JVM)
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
+```bash
+./gradlew :composeApp:run
+```
 
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+### Web
+
+- **Wasm (recommended)**
+
+```bash
+./gradlew :composeApp:wasmJsBrowserDevelopmentRun
+```
+
+- **JS (legacy)**
+
+```bash
+./gradlew :composeApp:jsBrowserDevelopmentRun
+```
+
+### iOS
+
+Open `iosApp/` in Xcode and run from there.
+
+## Create a Shareable Release APK (Signed)
+
+`assembleRelease` may generate an **unsigned** APK by default. To share/install a release APK you must **sign it**.
+
+### 1) Create a keystore (one-time)
+
+```bash
+keytool -genkeypair -v \
+  -keystore mercapp-release.keystore \
+  -alias mercapp \
+  -keyalg RSA -keysize 2048 -validity 10000
+```
+
+### 2) Add signing properties (recommended)
+
+Add to `~/.gradle/gradle.properties`:
+
+```properties
+RELEASE_STORE_FILE=/absolute/path/to/mercapp-release.keystore
+RELEASE_STORE_PASSWORD=your_password
+RELEASE_KEY_ALIAS=mercapp
+RELEASE_KEY_PASSWORD=your_password
+```
+
+### 3) Build release
+
+```bash
+./gradlew :composeApp:assembleRelease
+```
+
+APK output:
+
+- `composeApp/build/outputs/apk/release/`
+
+## Troubleshooting
+
+- **Android Studio shows Gradle version errors but `./gradlew build` succeeds**
+  - Ensure the IDE is configured to use the **Gradle Wrapper**.
+  - Sync Gradle and, if needed, invalidate caches.
+
+## Development
+
+- Formatting and style follow Kotlin/Compose conventions.
+- Prefer small, focused commits.
+
+## License
+
+Private project (add a license if you plan to open source it).

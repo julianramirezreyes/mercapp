@@ -1,0 +1,67 @@
+{
+  "projectStructure": {
+    "formatVersion": "0.3.3",
+    "isPublishedAsRoot": "true",
+    "variants": [
+      {
+        "name": "androidApiElements",
+        "sourceSet": [
+          "commonMain"
+        ]
+      },
+      {
+        "name": "androidRuntimeElements",
+        "sourceSet": [
+          "commonMain"
+        ]
+      },
+      {
+        "name": "jvmStubsApiElements",
+        "sourceSet": [
+          "commonStubsMain",
+          "commonMain"
+        ]
+      },
+      {
+        "name": "jvmStubsRuntimeElements",
+        "sourceSet": [
+          "commonStubsMain",
+          "commonMain"
+        ]
+      },
+      {
+        "name": "linuxx64StubsApiElements",
+        "sourceSet": [
+          "commonStubsMain",
+          "commonMain"
+        ]
+      }
+    ],
+    "sourceSets": [
+      {
+        "name": "commonMain",
+        "dependsOn": [],
+        "moduleDependency": [
+          "androidx.navigationevent:navigationevent",
+          "androidx.compose.runtime:runtime",
+          "org.jetbrains.kotlin:kotlin-stdlib",
+          "org.jetbrains.kotlinx:kotlinx-coroutines-core"
+        ],
+        "binaryLayout": "klib"
+      },
+      {
+        "name": "commonStubsMain",
+        "dependsOn": [
+          "commonMain"
+        ],
+        "moduleDependency": [
+          "androidx.navigationevent:navigationevent",
+          "androidx.compose.runtime:runtime",
+          "org.jetbrains.kotlin:kotlin-stdlib",
+          "org.jetbrains.kotlinx:kotlinx-coroutines-core"
+        ],
+        "binaryLayout": "klib"
+      }
+    ]
+  }
+}

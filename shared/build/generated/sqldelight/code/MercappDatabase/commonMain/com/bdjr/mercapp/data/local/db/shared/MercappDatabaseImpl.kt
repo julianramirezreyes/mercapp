@@ -25,7 +25,7 @@ private class MercappDatabaseImpl(
 
   public object Schema : SqlSchema<QueryResult.Value<Unit>> {
     override val version: Long
-      get() = 3
+      get() = 4
 
     override fun create(driver: SqlDriver): QueryResult.Value<Unit> {
       driver.execute(null, """
@@ -44,6 +44,7 @@ private class MercappDatabaseImpl(
           |  name TEXT NOT NULL,
           |  establishment_id TEXT NOT NULL,
           |  is_in_shopping_list INTEGER NOT NULL,
+          |  shopping_detail TEXT,
           |  created_at INTEGER NOT NULL,
           |  updated_at INTEGER NOT NULL,
           |  is_dirty INTEGER NOT NULL,
@@ -93,6 +94,9 @@ private class MercappDatabaseImpl(
             |  email TEXT
             |)
             """.trimMargin(), 0)
+      }
+      if (oldVersion <= 3 && newVersion > 3) {
+        driver.execute(null, "ALTER TABLE products ADD COLUMN shopping_detail TEXT", 0)
       }
       return QueryResult.Unit
     }

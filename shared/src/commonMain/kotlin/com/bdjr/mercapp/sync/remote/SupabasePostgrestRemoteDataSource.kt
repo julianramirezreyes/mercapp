@@ -2,6 +2,7 @@ package com.bdjr.mercapp.sync.remote
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.statement.bodyAsText
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
@@ -9,6 +10,7 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
+import io.ktor.http.isSuccess
 
 class SupabasePostgrestRemoteDataSource(
     private val httpClient: HttpClient,
@@ -21,7 +23,7 @@ class SupabasePostgrestRemoteDataSource(
         accessToken: String,
         updatedAfter: Long,
     ): List<RemoteEstablishment> {
-        return httpClient.get(
+        val response = httpClient.get(
             "$restBaseUrl/mercapp_establishments" +
                 "?select=id,user_id,name,created_at,updated_at,is_deleted" +
                 "&updated_at=gt.$updatedAfter" +
@@ -29,22 +31,30 @@ class SupabasePostgrestRemoteDataSource(
         ) {
             header("apikey", anonKey)
             header(HttpHeaders.Authorization, "Bearer $accessToken")
-        }.body()
+        }
+        if (!response.status.isSuccess()) {
+            throw IllegalStateException("PostgREST fetchEstablishments failed (${response.status}): ${response.bodyAsText()}")
+        }
+        return response.body()
     }
 
     suspend fun fetchProductsSince(
         accessToken: String,
         updatedAfter: Long,
     ): List<RemoteProduct> {
-        return httpClient.get(
+        val response = httpClient.get(
             "$restBaseUrl/mercapp_products" +
-                "?select=id,user_id,establishment_id,name,is_in_shopping_list,created_at,updated_at,is_deleted" +
+                "?select=id,user_id,establishment_id,name,is_in_shopping_list,shopping_detail,created_at,updated_at,is_deleted" +
                 "&updated_at=gt.$updatedAfter" +
                 "&order=updated_at.asc",
         ) {
             header("apikey", anonKey)
             header(HttpHeaders.Authorization, "Bearer $accessToken")
-        }.body()
+        }
+        if (!response.status.isSuccess()) {
+            throw IllegalStateException("PostgREST fetchProducts failed (${response.status}): ${response.bodyAsText()}")
+        }
+        return response.body()
     }
 
     suspend fun upsertEstablishments(
@@ -53,13 +63,17 @@ class SupabasePostgrestRemoteDataSource(
     ): List<RemoteEstablishment> {
         if (items.isEmpty()) return emptyList()
 
-        return httpClient.post("$restBaseUrl/mercapp_establishments?on_conflict=id") {
+        val response = httpClient.post("$restBaseUrl/mercapp_establishments?on_conflict=id") {
             header("apikey", anonKey)
             header(HttpHeaders.Authorization, "Bearer $accessToken")
             header("Prefer", "resolution=merge-duplicates,return=representation")
             contentType(ContentType.Application.Json)
             setBody(items)
-        }.body()
+        }
+        if (!response.status.isSuccess()) {
+            throw IllegalStateException("PostgREST upsertEstablishments failed (${response.status}): ${response.bodyAsText()}")
+        }
+        return response.body()
     }
 
     suspend fun upsertProducts(
@@ -68,12 +82,16 @@ class SupabasePostgrestRemoteDataSource(
     ): List<RemoteProduct> {
         if (items.isEmpty()) return emptyList()
 
-        return httpClient.post("$restBaseUrl/mercapp_products?on_conflict=id") {
+        val response = httpClient.post("$restBaseUrl/mercapp_products?on_conflict=id") {
             header("apikey", anonKey)
             header(HttpHeaders.Authorization, "Bearer $accessToken")
             header("Prefer", "resolution=merge-duplicates,return=representation")
             contentType(ContentType.Application.Json)
             setBody(items)
-        }.body()
+        }
+        if (!response.status.isSuccess()) {
+            throw IllegalStateException("PostgREST upsertProducts failed (${response.status}): ${response.bodyAsText()}")
+        }
+        return response.body()
     }
 }

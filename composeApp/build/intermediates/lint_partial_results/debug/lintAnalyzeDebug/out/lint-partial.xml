@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<incidents format="6" by="lint 8.13.2" type="partial_results">
+<incidents format="6" by="lint 9.0.1" type="partial_results">
     <map id="UnsafeIntentLaunch">
             <map id="unprotected">
                 <entry
@@ -8,9 +8,29 @@
             </map>
     </map>
     <map id="UnusedResources">
+        <location id="R.drawable.ic_launcher_background"
+            file="${:composeApp*debug*MAIN*sourceProvider*0*resDir*1}/drawable/ic_launcher_background.xml"
+            line="2"
+            column="1"
+            startOffset="39"
+            endLine="170"
+            endColumn="10"
+            endOffset="5605"/>
+        <location id="R.drawable.ic_launcher_foreground"
+            file="${:composeApp*debug*MAIN*sourceProvider*0*resDir*1}/drawable-v24/ic_launcher_foreground.xml"
+            line="1"
+            column="1"
+            startOffset="0"
+            endLine="30"
+            endColumn="10"
+            endOffset="1702"/>
+        <location id="R.mipmap.ic_launcher"
+            file="${:composeApp*debug*MAIN*sourceProvider*0*resDir*1}/mipmap-hdpi/ic_launcher.png"/>
+        <location id="R.mipmap.ic_launcher_round"
+            file="${:composeApp*debug*MAIN*sourceProvider*0*resDir*1}/mipmap-hdpi/ic_launcher_round.png"/>
         <entry
             name="model"
-            string="drawable[ic_launcher_background(U),ic_launcher_foreground(U),ic_launcher_foreground_1(R)],mipmap[ic_launcher(U),ic_launcher_round(U)],string[app_name(U)];1^2,3^0^1,4^0^1;;;"/>
+            string="drawable[ic_mercapp(U),ic_launcher_background(D),ic_launcher_foreground(D),ic_launcher_foreground_1(E)],mipmap[ic_launcher(D),ic_launcher_round(D)],string[app_name(U)];2^3,4^1^2,5^1^2;;;"/>
     </map>
 
 </incidents>

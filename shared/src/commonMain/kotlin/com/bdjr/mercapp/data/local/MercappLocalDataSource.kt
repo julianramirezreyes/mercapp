@@ -134,6 +134,7 @@ class MercappLocalDataSource(
         establishmentId: String,
         name: String,
         isInShoppingList: Boolean,
+        shoppingDetail: String?,
         createdAt: Long,
         updatedAt: Long,
         isDirty: Boolean,
@@ -145,6 +146,7 @@ class MercappLocalDataSource(
                 establishmentId = establishmentId,
                 name = name,
                 isInShoppingList = isInShoppingList,
+                shoppingDetail = shoppingDetail,
                 createdAt = createdAt,
                 updatedAt = updatedAt,
                 isDirty = isDirty,
@@ -155,6 +157,7 @@ class MercappLocalDataSource(
                 establishmentId = establishmentId,
                 name = name,
                 isInShoppingList = isInShoppingList,
+                shoppingDetail = shoppingDetail,
                 updatedAt = updatedAt,
                 isDirty = isDirty,
                 isDeleted = isDeleted,
@@ -175,11 +178,13 @@ class MercappLocalDataSource(
     fun setProductInShoppingList(
         id: String,
         isInShoppingList: Boolean,
+        shoppingDetail: String?,
         updatedAt: Long,
     ) {
         database.mercappDatabaseQueries.setProductInShoppingList(
             id = id,
             isInShoppingList = isInShoppingList,
+            shoppingDetail = shoppingDetail,
             updatedAt = updatedAt,
         )
     }

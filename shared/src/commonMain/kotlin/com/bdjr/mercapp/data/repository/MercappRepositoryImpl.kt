@@ -68,17 +68,16 @@ class MercappRepositoryImpl(
         now: Long,
     ): String {
         val resolvedId = id ?: Uuid.random()
-        val createdAt = if (id == null) {
-            now
-        } else {
-            local.getProductById(resolvedId)?.created_at ?: now
-        }
+        val existing = if (id == null) null else local.getProductById(resolvedId)
+        val createdAt = if (id == null) now else existing?.created_at ?: now
+        val shoppingDetail = existing?.shopping_detail
 
         local.upsertProduct(
             id = resolvedId,
             establishmentId = establishmentId,
             name = name,
             isInShoppingList = isInShoppingList,
+            shoppingDetail = shoppingDetail,
             createdAt = createdAt,
             updatedAt = now,
             isDirty = true,
@@ -91,11 +90,13 @@ class MercappRepositoryImpl(
     override suspend fun setProductInShoppingList(
         id: String,
         isInShoppingList: Boolean,
+        shoppingDetail: String?,
         now: Long,
     ) {
         local.setProductInShoppingList(
             id = id,
             isInShoppingList = isInShoppingList,
+            shoppingDetail = shoppingDetail,
             updatedAt = now,
         )
     }

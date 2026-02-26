@@ -34,6 +34,7 @@ interface MercappRepository {
     suspend fun setProductInShoppingList(
         id: String,
         isInShoppingList: Boolean,
+        shoppingDetail: String?,
         now: Long,
     )
 

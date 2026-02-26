@@ -1,9 +1,9 @@
 <libraries>
   <library
       name=":@@:shared::debug"
-      jars="/home/julian/.gradle/caches/8.14.3/transforms/85e65dc773f15e79322e5da8fce99a48/transformed/out/jars/classes.jar:/home/julian/.gradle/caches/8.14.3/transforms/85e65dc773f15e79322e5da8fce99a48/transformed/out/jars/libs/R.jar"
+      jars="/home/julian/.gradle/caches/9.2.1/transforms/12353e4c9a318d721c83ebd53d6f3890/transformed/out/jars/classes.jar:/home/julian/.gradle/caches/9.2.1/transforms/12353e4c9a318d721c83ebd53d6f3890/transformed/out/jars/libs/R.jar"
       resolved="Mercapp:shared:unspecified"
-      folder="/home/julian/.gradle/caches/8.14.3/transforms/85e65dc773f15e79322e5da8fce99a48/transformed/out"
+      folder="/home/julian/.gradle/caches/9.2.1/transforms/12353e4c9a318d721c83ebd53d6f3890/transformed/out"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -14,9 +14,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="app.cash.sqldelight:android-driver:2.1.0:debug@aar"
-      jars="/home/julian/.gradle/caches/8.14.3/transforms/8e2c7d7fc97f4783a1834135ab282a36/transformed/android-driver-2.1.0-debug/jars/classes.jar"
+      jars="/home/julian/.gradle/caches/9.2.1/transforms/66b9f2bd13cf914b642118e470cc7143/transformed/android-driver-2.1.0-debug/jars/classes.jar"
       resolved="app.cash.sqldelight:android-driver:2.1.0"
-      folder="/home/julian/.gradle/caches/8.14.3/transforms/8e2c7d7fc97f4783a1834135ab282a36/transformed/android-driver-2.1.0-debug"
+      folder="/home/julian/.gradle/caches/9.2.1/transforms/66b9f2bd13cf914b642118e470cc7143/transformed/android-driver-2.1.0-debug"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -115,9 +115,9 @@
       resolved="io.insert-koin:koin-core-jvm:4.1.1"/>
   <library
       name="com.squareup.okhttp3:okhttp-android:5.2.1@aar"
-      jars="/home/julian/.gradle/caches/8.14.3/transforms/3e511a551fdec20bd3a930dda6ce01b1/transformed/okhttp-release/jars/classes.jar"
+      jars="/home/julian/.gradle/caches/9.2.1/transforms/4082d963302af2c4e67a929b783145e4/transformed/okhttp-release/jars/classes.jar"
       resolved="com.squareup.okhttp3:okhttp-android:5.2.1"
-      folder="/home/julian/.gradle/caches/8.14.3/transforms/3e511a551fdec20bd3a930dda6ce01b1/transformed/okhttp-release"
+      folder="/home/julian/.gradle/caches/9.2.1/transforms/4082d963302af2c4e67a929b783145e4/transformed/okhttp-release"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -132,9 +132,9 @@
       resolved="com.squareup.okio:okio-jvm:3.16.2"/>
   <library
       name="androidx.sqlite:sqlite-android:2.5.1@aar"
-      jars="/home/julian/.gradle/caches/8.14.3/transforms/136070cf06407e1451c447426c677ee9/transformed/sqlite-release/jars/classes.jar"
+      jars="/home/julian/.gradle/caches/9.2.1/transforms/b34f67803ff0dc6efdbadb216dd93507/transformed/sqlite-release/jars/classes.jar"
       resolved="androidx.sqlite:sqlite-android:2.5.1"
-      folder="/home/julian/.gradle/caches/8.14.3/transforms/136070cf06407e1451c447426c677ee9/transformed/sqlite-release"
+      folder="/home/julian/.gradle/caches/9.2.1/transforms/b34f67803ff0dc6efdbadb216dd93507/transformed/sqlite-release"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -177,9 +177,9 @@
       resolved="org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.10.2"/>
   <library
       name="androidx.sqlite:sqlite-framework-android:2.5.1@aar"
-      jars="/home/julian/.gradle/caches/8.14.3/transforms/742763f925a1a2d9120f970328e3714b/transformed/sqlite-framework-release/jars/classes.jar"
+      jars="/home/julian/.gradle/caches/9.2.1/transforms/7ab334f21fed3bef7f1121435bb9dd3e/transformed/sqlite-framework-release/jars/classes.jar"
       resolved="androidx.sqlite:sqlite-framework-android:2.5.1"
-      folder="/home/julian/.gradle/caches/8.14.3/transforms/742763f925a1a2d9120f970328e3714b/transformed/sqlite-framework-release"
+      folder="/home/julian/.gradle/caches/9.2.1/transforms/7ab334f21fed3bef7f1121435bb9dd3e/transformed/sqlite-framework-release"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -198,9 +198,9 @@
       resolved="co.touchlab:stately-concurrency-jvm:2.1.0"/>
   <library
       name="androidx.startup:startup-runtime:1.2.0@aar"
-      jars="/home/julian/.gradle/caches/8.14.3/transforms/cc6355bb76e15891b958596c1965a681/transformed/startup-runtime-1.2.0/jars/classes.jar"
+      jars="/home/julian/.gradle/caches/9.2.1/transforms/ada3583bc78cf3d68142b837ec7e4a5c/transformed/startup-runtime-1.2.0/jars/classes.jar"
       resolved="androidx.startup:startup-runtime:1.2.0"
-      folder="/home/julian/.gradle/caches/8.14.3/transforms/cc6355bb76e15891b958596c1965a681/transformed/startup-runtime-1.2.0"
+      folder="/home/julian/.gradle/caches/9.2.1/transforms/ada3583bc78cf3d68142b837ec7e4a5c/transformed/startup-runtime-1.2.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -211,9 +211,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.tracing:tracing:1.0.0@aar"
-      jars="/home/julian/.gradle/caches/8.14.3/transforms/324a34c267ec4c60b2d73780df21e592/transformed/tracing-1.0.0/jars/classes.jar"
+      jars="/home/julian/.gradle/caches/9.2.1/transforms/3298a75e19084464029201e1974fb5d1/transformed/tracing-1.0.0/jars/classes.jar"
       resolved="androidx.tracing:tracing:1.0.0"
-      folder="/home/julian/.gradle/caches/8.14.3/transforms/324a34c267ec4c60b2d73780df21e592/transformed/tracing-1.0.0"
+      folder="/home/julian/.gradle/caches/9.2.1/transforms/3298a75e19084464029201e1974fb5d1/transformed/tracing-1.0.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"

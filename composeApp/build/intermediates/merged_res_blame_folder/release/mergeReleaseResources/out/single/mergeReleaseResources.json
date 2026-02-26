@@ -12,6 +12,10 @@
         "source": "com.bdjr.mercapp.composeApp-androidMain-43:/drawable-v24/ic_launcher_foreground.xml"
     },
     {
+        "merged": "com.bdjr.mercapp.composeApp-release-42:/drawable-nodpi_ic_mercapp.png.flat",
+        "source": "com.bdjr.mercapp.composeApp-androidMain-43:/drawable-nodpi/ic_mercapp.png"
+    },
+    {
         "merged": "com.bdjr.mercapp.composeApp-release-42:/mipmap-xxhdpi_ic_launcher_round.png.flat",
         "source": "com.bdjr.mercapp.composeApp-androidMain-43:/mipmap-xxhdpi/ic_launcher_round.png"
     },

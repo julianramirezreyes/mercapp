@@ -9,6 +9,7 @@ public data class Products(
   public val name: String,
   public val establishment_id: String,
   public val is_in_shopping_list: Boolean,
+  public val shopping_detail: String?,
   public val created_at: Long,
   public val updated_at: Long,
   public val is_dirty: Boolean,

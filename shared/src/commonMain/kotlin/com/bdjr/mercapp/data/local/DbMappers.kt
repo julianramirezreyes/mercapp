@@ -22,6 +22,7 @@ internal fun Products.toDomain(): Product {
         name = name,
         establishmentId = establishment_id,
         isInShoppingList = is_in_shopping_list,
+        shoppingDetail = shopping_detail,
         createdAt = created_at,
         updatedAt = updated_at,
         isDirty = is_dirty,

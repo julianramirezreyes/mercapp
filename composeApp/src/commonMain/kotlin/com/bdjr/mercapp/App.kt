@@ -24,6 +24,7 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -263,11 +264,12 @@ fun App() {
                         now = now,
                     )
                 },
-                onToggleShopping = { id, isInShoppingList ->
+                onToggleShopping = { id, isInShoppingList, shoppingDetail ->
                     val now = System.currentTimeMillis()
                     setProductInShoppingList(
                         id = id,
                         isInShoppingList = isInShoppingList,
+                        shoppingDetail = shoppingDetail,
                         now = now,
                     )
                 },
@@ -350,7 +352,7 @@ private fun HomeScreen(
                             }
                         },
                     ) {
-                        Text("Salir")
+                        Text("Cerrar sesión")
                     }
                 },
             )
@@ -613,7 +615,7 @@ private fun ProductsScreen(
     onBack: () -> Unit,
     onAdd: suspend (name: String) -> Unit,
     onEdit: suspend (id: String, name: String, isInShoppingList: Boolean) -> Unit,
-    onToggleShopping: suspend (id: String, isInShoppingList: Boolean) -> Unit,
+    onToggleShopping: suspend (id: String, isInShoppingList: Boolean, shoppingDetail: String?) -> Unit,
     onDelete: suspend (id: String) -> Unit,
     onSync: suspend () -> Unit,
     onSignOut: suspend () -> Unit,
@@ -634,6 +636,10 @@ private fun ProductsScreen(
     var showDeleteConfirm by remember { mutableStateOf(false) }
     var deleteId by remember { mutableStateOf<String?>(null) }
     var isSyncing by remember { mutableStateOf(false) }
+
+    var showShoppingDetailDialog by remember { mutableStateOf(false) }
+    var shoppingDetailId by remember { mutableStateOf<String?>(null) }
+    var shoppingDetailValue by remember { mutableStateOf("") }
 
     val shoppingList = remember(products) {
         products.filter { it.isInShoppingList && !it.isDeleted }
@@ -694,7 +700,14 @@ private fun ProductsScreen(
                             onClick = {
                                 val text = shoppingList
                                     .sortedBy { it.name.lowercase() }
-                                    .joinToString(separator = "\n") { "- ${it.name}" }
+                                    .joinToString(separator = "\n") {
+                                        val detail = it.shoppingDetail?.trim().orEmpty()
+                                        if (detail.isEmpty()) {
+                                            "- ${it.name}"
+                                        } else {
+                                            "- ${it.name} ${detail}"
+                                        }
+                                    }
 
                                 scope.launch {
                                     @Suppress("DEPRECATION")
@@ -731,7 +744,7 @@ private fun ProductsScreen(
                             scope.launch { onSignOut() }
                         },
                     ) {
-                        Text("Salir")
+                        Text("Cerrar sesión")
                     }
                 },
                 navigationIcon = {
@@ -809,7 +822,7 @@ private fun ProductsScreen(
                                 .clickable(enabled = !item.isDeleted) {
                                     val next = !item.isInShoppingList
                                     scope.launch {
-                                        runCatching { onToggleShopping(item.id, next) }
+                                        runCatching { onToggleShopping(item.id, next, null) }
                                             .onFailure { t ->
                                                 snackbarHostState.showSnackbar(t.message ?: "Error")
                                             }
@@ -832,37 +845,53 @@ private fun ProductsScreen(
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     Text(text = item.name, style = MaterialTheme.typography.titleMedium)
-                                    Box {
-                                        IconButton(
-                                            onClick = { menuExpanded = true },
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        FilledTonalButton(
+                                            onClick = {
+                                                shoppingDetailId = item.id
+                                                shoppingDetailValue = ""
+                                                showShoppingDetailDialog = true
+                                            },
                                             enabled = !item.isDeleted,
                                         ) {
-                                            Text("⋮")
+                                            Text("Detalle")
                                         }
-                                        DropdownMenu(
-                                            expanded = menuExpanded,
-                                            onDismissRequest = { menuExpanded = false },
-                                        ) {
-                                            DropdownMenuItem(
-                                                text = { Text("Editar") },
-                                                onClick = {
-                                                    menuExpanded = false
-                                                    editId = item.id
-                                                    editName = item.name
-                                                    editInShopping = item.isInShoppingList
-                                                    showEditDialog = true
-                                                },
+
+                                        Box {
+                                            IconButton(
+                                                onClick = { menuExpanded = true },
                                                 enabled = !item.isDeleted,
-                                            )
-                                            DropdownMenuItem(
-                                                text = { Text("Eliminar") },
-                                                onClick = {
-                                                    menuExpanded = false
-                                                    deleteId = item.id
-                                                    showDeleteConfirm = true
-                                                },
-                                                enabled = !item.isDeleted,
-                                            )
+                                            ) {
+                                                Text("⋮")
+                                            }
+                                            DropdownMenu(
+                                                expanded = menuExpanded,
+                                                onDismissRequest = { menuExpanded = false },
+                                            ) {
+                                                DropdownMenuItem(
+                                                    text = { Text("Editar") },
+                                                    onClick = {
+                                                        menuExpanded = false
+                                                        editId = item.id
+                                                        editName = item.name
+                                                        editInShopping = item.isInShoppingList
+                                                        showEditDialog = true
+                                                    },
+                                                    enabled = !item.isDeleted,
+                                                )
+                                                DropdownMenuItem(
+                                                    text = { Text("Eliminar") },
+                                                    onClick = {
+                                                        menuExpanded = false
+                                                        deleteId = item.id
+                                                        showDeleteConfirm = true
+                                                    },
+                                                    enabled = !item.isDeleted,
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -927,7 +956,7 @@ private fun ProductsScreen(
                                 .fillMaxWidth()
                                 .clickable {
                                     scope.launch {
-                                        runCatching { onToggleShopping(item.id, false) }
+                                        runCatching { onToggleShopping(item.id, false, null) }
                                             .onFailure { t ->
                                                 snackbarHostState.showSnackbar(t.message ?: "Error")
                                             }
@@ -945,7 +974,20 @@ private fun ProductsScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                Text(text = item.name, style = MaterialTheme.typography.titleMedium)
+                                Column(
+                                    modifier = Modifier.weight(1f),
+                                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                                ) {
+                                    Text(text = item.name, style = MaterialTheme.typography.titleMedium)
+                                    val detail = item.shoppingDetail?.trim().orEmpty()
+                                    if (detail.isNotEmpty()) {
+                                        Text(
+                                            text = detail,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
+                                }
                                 Box {
                                     IconButton(onClick = { menuExpanded = true }) {
                                         Text("⋮")
@@ -954,6 +996,15 @@ private fun ProductsScreen(
                                         expanded = menuExpanded,
                                         onDismissRequest = { menuExpanded = false },
                                     ) {
+                                        DropdownMenuItem(
+                                            text = { Text("Detalle") },
+                                            onClick = {
+                                                menuExpanded = false
+                                                shoppingDetailId = item.id
+                                                shoppingDetailValue = item.shoppingDetail.orEmpty()
+                                                showShoppingDetailDialog = true
+                                            },
+                                        )
                                         DropdownMenuItem(
                                             text = { Text("Editar") },
                                             onClick = {
@@ -1114,6 +1165,67 @@ private fun ProductsScreen(
             dismissButton = {
                 TextButton(onClick = { showDeleteConfirm = false }) {
                     Text("Cancelar")
+                }
+            },
+        )
+    }
+
+    if (showShoppingDetailDialog) {
+        val id = shoppingDetailId
+        AlertDialog(
+            onDismissRequest = {
+                showShoppingDetailDialog = false
+                shoppingDetailId = null
+                shoppingDetailValue = ""
+            },
+            title = { Text("Detalle") },
+            text = {
+                OutlinedTextField(
+                    value = shoppingDetailValue,
+                    onValueChange = { shoppingDetailValue = it },
+                    label = { Text("Ej: x250 g, 3 unidades") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        if (id == null) return@Button
+                        val raw = shoppingDetailValue.trim()
+                        val detail = raw.ifEmpty { null }
+
+                        showShoppingDetailDialog = false
+                        shoppingDetailId = null
+                        shoppingDetailValue = ""
+
+                        scope.launch {
+                            runCatching { onToggleShopping(id, true, detail) }
+                                .onFailure { t -> snackbarHostState.showSnackbar(t.message ?: "Error") }
+                        }
+                    },
+                    enabled = id != null,
+                ) {
+                    Text("Guardar")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        val id2 = id
+                        showShoppingDetailDialog = false
+                        shoppingDetailId = null
+                        shoppingDetailValue = ""
+
+                        if (id2 != null) {
+                            scope.launch {
+                                runCatching { onToggleShopping(id2, true, null) }
+                                    .onFailure { t -> snackbarHostState.showSnackbar(t.message ?: "Error") }
+                            }
+                        }
+                    },
+                ) {
+                    Text("Sin detalle")
                 }
             },
         )

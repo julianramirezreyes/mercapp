@@ -8,11 +8,13 @@ class SetProductInShoppingList(
     suspend operator fun invoke(
         id: String,
         isInShoppingList: Boolean,
+        shoppingDetail: String?,
         now: Long,
     ) {
         repository.setProductInShoppingList(
             id = id,
             isInShoppingList = isInShoppingList,
+            shoppingDetail = shoppingDetail,
             now = now,
         )
     }

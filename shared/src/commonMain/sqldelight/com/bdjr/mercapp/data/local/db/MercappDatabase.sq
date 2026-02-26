@@ -14,6 +14,7 @@ CREATE TABLE products (
   name TEXT NOT NULL,
   establishment_id TEXT NOT NULL,
   is_in_shopping_list INTEGER AS Boolean NOT NULL,
+  shopping_detail TEXT,
   created_at INTEGER NOT NULL,
   updated_at INTEGER NOT NULL,
   is_dirty INTEGER AS Boolean NOT NULL,
@@ -138,14 +139,15 @@ SET is_deleted = 1,
 WHERE id = :id;
 
 insertProductIfAbsent:
-INSERT OR IGNORE INTO products(id, name, establishment_id, is_in_shopping_list, created_at, updated_at, is_dirty, is_deleted)
-VALUES (:id, :name, :establishmentId, :isInShoppingList, :createdAt, :updatedAt, :isDirty, :isDeleted);
+INSERT OR IGNORE INTO products(id, name, establishment_id, is_in_shopping_list, shopping_detail, created_at, updated_at, is_dirty, is_deleted)
+VALUES (:id, :name, :establishmentId, :isInShoppingList, :shoppingDetail, :createdAt, :updatedAt, :isDirty, :isDeleted);
 
 updateProduct:
 UPDATE products
 SET name = :name,
     establishment_id = :establishmentId,
     is_in_shopping_list = :isInShoppingList,
+    shopping_detail = :shoppingDetail,
     updated_at = :updatedAt,
     is_dirty = :isDirty,
     is_deleted = :isDeleted
@@ -154,6 +156,7 @@ WHERE id = :id;
 setProductInShoppingList:
 UPDATE products
 SET is_in_shopping_list = :isInShoppingList,
+    shopping_detail = :shoppingDetail,
     is_dirty = 1,
     updated_at = :updatedAt
 WHERE id = :id;

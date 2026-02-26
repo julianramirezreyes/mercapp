@@ -82,6 +82,7 @@ public class MercappDatabaseQueries(
       name: String,
       establishment_id: String,
       is_in_shopping_list: Boolean,
+      shopping_detail: String?,
       created_at: Long,
       updated_at: Long,
       is_dirty: Boolean,
@@ -93,21 +94,24 @@ public class MercappDatabaseQueries(
       cursor.getString(1)!!,
       cursor.getString(2)!!,
       cursor.getBoolean(3)!!,
-      cursor.getLong(4)!!,
+      cursor.getString(4),
       cursor.getLong(5)!!,
-      cursor.getBoolean(6)!!,
-      cursor.getBoolean(7)!!
+      cursor.getLong(6)!!,
+      cursor.getBoolean(7)!!,
+      cursor.getBoolean(8)!!
     )
   }
 
   public fun selectProductsByEstablishment(establishmentId: String, includeDeleted: Boolean):
       Query<Products> = selectProductsByEstablishment(establishmentId, includeDeleted) { id, name,
-      establishment_id, is_in_shopping_list, created_at, updated_at, is_dirty, is_deleted ->
+      establishment_id, is_in_shopping_list, shopping_detail, created_at, updated_at, is_dirty,
+      is_deleted ->
     Products(
       id,
       name,
       establishment_id,
       is_in_shopping_list,
+      shopping_detail,
       created_at,
       updated_at,
       is_dirty,
@@ -120,6 +124,7 @@ public class MercappDatabaseQueries(
     name: String,
     establishment_id: String,
     is_in_shopping_list: Boolean,
+    shopping_detail: String?,
     created_at: Long,
     updated_at: Long,
     is_dirty: Boolean,
@@ -130,20 +135,23 @@ public class MercappDatabaseQueries(
       cursor.getString(1)!!,
       cursor.getString(2)!!,
       cursor.getBoolean(3)!!,
-      cursor.getLong(4)!!,
+      cursor.getString(4),
       cursor.getLong(5)!!,
-      cursor.getBoolean(6)!!,
-      cursor.getBoolean(7)!!
+      cursor.getLong(6)!!,
+      cursor.getBoolean(7)!!,
+      cursor.getBoolean(8)!!
     )
   }
 
   public fun selectProductById(id: String): Query<Products> = selectProductById(id) { id_, name,
-      establishment_id, is_in_shopping_list, created_at, updated_at, is_dirty, is_deleted ->
+      establishment_id, is_in_shopping_list, shopping_detail, created_at, updated_at, is_dirty,
+      is_deleted ->
     Products(
       id_,
       name,
       establishment_id,
       is_in_shopping_list,
+      shopping_detail,
       created_at,
       updated_at,
       is_dirty,
@@ -191,13 +199,14 @@ public class MercappDatabaseQueries(
     name: String,
     establishment_id: String,
     is_in_shopping_list: Boolean,
+    shopping_detail: String?,
     created_at: Long,
     updated_at: Long,
     is_dirty: Boolean,
     is_deleted: Boolean,
   ) -> T): Query<T> = Query(-1_665_521_957, arrayOf("products"), driver, "MercappDatabase.sq",
       "selectDirtyProducts", """
-  |SELECT products.id, products.name, products.establishment_id, products.is_in_shopping_list, products.created_at, products.updated_at, products.is_dirty, products.is_deleted
+  |SELECT products.id, products.name, products.establishment_id, products.is_in_shopping_list, products.shopping_detail, products.created_at, products.updated_at, products.is_dirty, products.is_deleted
   |FROM products
   |WHERE is_dirty = 1
   """.trimMargin()) { cursor ->
@@ -206,20 +215,23 @@ public class MercappDatabaseQueries(
       cursor.getString(1)!!,
       cursor.getString(2)!!,
       cursor.getBoolean(3)!!,
-      cursor.getLong(4)!!,
+      cursor.getString(4),
       cursor.getLong(5)!!,
-      cursor.getBoolean(6)!!,
-      cursor.getBoolean(7)!!
+      cursor.getLong(6)!!,
+      cursor.getBoolean(7)!!,
+      cursor.getBoolean(8)!!
     )
   }
 
   public fun selectDirtyProducts(): Query<Products> = selectDirtyProducts { id, name,
-      establishment_id, is_in_shopping_list, created_at, updated_at, is_dirty, is_deleted ->
+      establishment_id, is_in_shopping_list, shopping_detail, created_at, updated_at, is_dirty,
+      is_deleted ->
     Products(
       id,
       name,
       establishment_id,
       is_in_shopping_list,
+      shopping_detail,
       created_at,
       updated_at,
       is_dirty,
@@ -468,23 +480,25 @@ public class MercappDatabaseQueries(
     name: String,
     establishmentId: String,
     isInShoppingList: Boolean,
+    shoppingDetail: String?,
     createdAt: Long,
     updatedAt: Long,
     isDirty: Boolean,
     isDeleted: Boolean,
   ): QueryResult<Long> {
     val result = driver.execute(-745_556_051, """
-        |INSERT OR IGNORE INTO products(id, name, establishment_id, is_in_shopping_list, created_at, updated_at, is_dirty, is_deleted)
-        |VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """.trimMargin(), 8) {
+        |INSERT OR IGNORE INTO products(id, name, establishment_id, is_in_shopping_list, shopping_detail, created_at, updated_at, is_dirty, is_deleted)
+        |VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """.trimMargin(), 9) {
           bindString(0, id)
           bindString(1, name)
           bindString(2, establishmentId)
           bindBoolean(3, isInShoppingList)
-          bindLong(4, createdAt)
-          bindLong(5, updatedAt)
-          bindBoolean(6, isDirty)
-          bindBoolean(7, isDeleted)
+          bindString(4, shoppingDetail)
+          bindLong(5, createdAt)
+          bindLong(6, updatedAt)
+          bindBoolean(7, isDirty)
+          bindBoolean(8, isDeleted)
         }
     notifyQueries(-745_556_051) { emit ->
       emit("products")
@@ -499,6 +513,7 @@ public class MercappDatabaseQueries(
     name: String,
     establishmentId: String,
     isInShoppingList: Boolean,
+    shoppingDetail: String?,
     updatedAt: Long,
     isDirty: Boolean,
     isDeleted: Boolean,
@@ -509,18 +524,20 @@ public class MercappDatabaseQueries(
         |SET name = ?,
         |    establishment_id = ?,
         |    is_in_shopping_list = ?,
+        |    shopping_detail = ?,
         |    updated_at = ?,
         |    is_dirty = ?,
         |    is_deleted = ?
         |WHERE id = ?
-        """.trimMargin(), 7) {
+        """.trimMargin(), 8) {
           bindString(0, name)
           bindString(1, establishmentId)
           bindBoolean(2, isInShoppingList)
-          bindLong(3, updatedAt)
-          bindBoolean(4, isDirty)
-          bindBoolean(5, isDeleted)
-          bindString(6, id)
+          bindString(3, shoppingDetail)
+          bindLong(4, updatedAt)
+          bindBoolean(5, isDirty)
+          bindBoolean(6, isDeleted)
+          bindString(7, id)
         }
     notifyQueries(656_990_151) { emit ->
       emit("products")
@@ -533,19 +550,22 @@ public class MercappDatabaseQueries(
    */
   public fun setProductInShoppingList(
     isInShoppingList: Boolean,
+    shoppingDetail: String?,
     updatedAt: Long,
     id: String,
   ): QueryResult<Long> {
     val result = driver.execute(-1_569_209_097, """
         |UPDATE products
         |SET is_in_shopping_list = ?,
+        |    shopping_detail = ?,
         |    is_dirty = 1,
         |    updated_at = ?
         |WHERE id = ?
-        """.trimMargin(), 3) {
+        """.trimMargin(), 4) {
           bindBoolean(0, isInShoppingList)
-          bindLong(1, updatedAt)
-          bindString(2, id)
+          bindString(1, shoppingDetail)
+          bindLong(2, updatedAt)
+          bindString(3, id)
         }
     notifyQueries(-1_569_209_097) { emit ->
       emit("products")
@@ -637,7 +657,7 @@ public class MercappDatabaseQueries(
 
     override fun <R> execute(mapper: (SqlCursor) -> QueryResult<R>): QueryResult<R> =
         driver.executeQuery(-1_089_185_215, """
-    |SELECT products.id, products.name, products.establishment_id, products.is_in_shopping_list, products.created_at, products.updated_at, products.is_dirty, products.is_deleted
+    |SELECT products.id, products.name, products.establishment_id, products.is_in_shopping_list, products.shopping_detail, products.created_at, products.updated_at, products.is_dirty, products.is_deleted
     |FROM products
     |WHERE establishment_id = ?
     |  AND (? OR is_deleted = 0)
@@ -664,7 +684,7 @@ public class MercappDatabaseQueries(
 
     override fun <R> execute(mapper: (SqlCursor) -> QueryResult<R>): QueryResult<R> =
         driver.executeQuery(1_160_047_142, """
-    |SELECT products.id, products.name, products.establishment_id, products.is_in_shopping_list, products.created_at, products.updated_at, products.is_dirty, products.is_deleted
+    |SELECT products.id, products.name, products.establishment_id, products.is_in_shopping_list, products.shopping_detail, products.created_at, products.updated_at, products.is_dirty, products.is_deleted
     |FROM products
     |WHERE id = ?
     """.trimMargin(), mapper, 1) {

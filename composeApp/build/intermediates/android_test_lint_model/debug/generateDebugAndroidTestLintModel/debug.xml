@@ -7,8 +7,7 @@
     mergedManifest="build/intermediates/merged_manifest/debug/processDebugMainManifest/AndroidManifest.xml"
     manifestMergeReport="build/outputs/logs/manifest-merger-debug-report.txt"
     partialResultsDir="build/intermediates/android_test_lint_partial_results/debug/lintAnalyzeDebugAndroidTest/out">
-  <buildFeatures
-      namespacing="REQUIRED"/>
+  <buildFeatures/>
   <sourceProviders>
   </sourceProviders>
   <testSourceProviders>
@@ -25,6 +24,6 @@
       type="INSTRUMENTATION_TEST"
       applicationId="com.bdjr.mercapp.test"
       generatedResourceFolders="build/generated/res/resValues/androidTest/debug"
-      desugaredMethodsFiles="/home/julian/.gradle/caches/8.14.3/transforms/11a31330b91799195b13dc31d585b31c/transformed/D8BackportedDesugaredMethods.txt">
+      desugaredMethodsFiles="/home/julian/.gradle/caches/9.2.1/transforms/ec2b44a98b5280abd53e1b7c5c59dce7/transformed/D8BackportedDesugaredMethods.txt">
   </artifact>
 </variant>

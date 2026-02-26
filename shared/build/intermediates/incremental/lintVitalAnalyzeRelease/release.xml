@@ -4,11 +4,10 @@
     minSdkVersion="24"
     targetSdkVersion="24"
     mergedManifest="build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml"
-    proguardFiles="build/intermediates/default_proguard_files/global/proguard-android.txt-8.13.2"
+    proguardFiles="build/intermediates/default_proguard_files/global/proguard-android-optimize.txt-9.0.1"
     partialResultsDir="build/intermediates/lint_vital_partial_results/release/lintVitalAnalyzeRelease/out"
-    desugaredMethodsFiles="/home/julian/.gradle/caches/8.14.3/transforms/11a31330b91799195b13dc31d585b31c/transformed/D8BackportedDesugaredMethods.txt">
-  <buildFeatures
-      namespacing="REQUIRED"/>
+    desugaredMethodsFiles="/home/julian/.gradle/caches/9.2.1/transforms/ec2b44a98b5280abd53e1b7c5c59dce7/transformed/D8BackportedDesugaredMethods.txt">
+  <buildFeatures/>
   <sourceProviders>
     <sourceProvider
         manifests="src/androidMain/AndroidManifest.xml"
@@ -26,6 +25,6 @@
       applicationId="com.bdjr.mercapp.shared"
       generatedSourceFolders="build/generated/ap_generated_sources/release/out"
       generatedResourceFolders="build/generated/res/resValues/release"
-      desugaredMethodsFiles="/home/julian/.gradle/caches/8.14.3/transforms/11a31330b91799195b13dc31d585b31c/transformed/D8BackportedDesugaredMethods.txt">
+      desugaredMethodsFiles="/home/julian/.gradle/caches/9.2.1/transforms/ec2b44a98b5280abd53e1b7c5c59dce7/transformed/D8BackportedDesugaredMethods.txt">
   </artifact>
 </variant>

@@ -1,16 +1,16 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /home/julian/proyectos/kotlin/mercapp/shared/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest11596140786438423123.xml:2:13-83
-INJECTED from /home/julian/proyectos/kotlin/mercapp/shared/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest11596140786438423123.xml:2:13-83
+ADDED from /home/julian/proyectos/kotlin/mercapp/shared/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest6254850620933395494.xml:2:13-83
+INJECTED from /home/julian/proyectos/kotlin/mercapp/shared/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest6254850620933395494.xml:2:13-83
 	package
-		INJECTED from /home/julian/proyectos/kotlin/mercapp/shared/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest11596140786438423123.xml
+		INJECTED from /home/julian/proyectos/kotlin/mercapp/shared/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest6254850620933395494.xml
 	xmlns:android
-		ADDED from /home/julian/proyectos/kotlin/mercapp/shared/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest11596140786438423123.xml:2:23-81
+		ADDED from /home/julian/proyectos/kotlin/mercapp/shared/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest6254850620933395494.xml:2:23-81
 uses-sdk
-INJECTED from /home/julian/proyectos/kotlin/mercapp/shared/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest11596140786438423123.xml reason: use-sdk injection requested
-INJECTED from /home/julian/proyectos/kotlin/mercapp/shared/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest11596140786438423123.xml
-INJECTED from /home/julian/proyectos/kotlin/mercapp/shared/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest11596140786438423123.xml
+INJECTED from /home/julian/proyectos/kotlin/mercapp/shared/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest6254850620933395494.xml reason: use-sdk injection requested
+INJECTED from /home/julian/proyectos/kotlin/mercapp/shared/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest6254850620933395494.xml
+INJECTED from /home/julian/proyectos/kotlin/mercapp/shared/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest6254850620933395494.xml
 	android:targetSdkVersion
-		INJECTED from /home/julian/proyectos/kotlin/mercapp/shared/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest11596140786438423123.xml
+		INJECTED from /home/julian/proyectos/kotlin/mercapp/shared/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest6254850620933395494.xml
 	android:minSdkVersion
-		INJECTED from /home/julian/proyectos/kotlin/mercapp/shared/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest11596140786438423123.xml
+		INJECTED from /home/julian/proyectos/kotlin/mercapp/shared/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest6254850620933395494.xml
